@@ -1,0 +1,31 @@
+{
+  "name": "gulp-es5-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tasks": "gulp --tasks",
+    "build": "gulp",
+    "miniHtml": "gulp miniHtml",
+    "miniJs": "gulp miniJs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AriseMarcher/gulp-example.git"
+  },
+  "author": "arisemarcher",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AriseMarcher/gulp-example/issues"
+  },
+  "homepage": "https://github.com/AriseMarcher/gulp-example#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-load-plugins": "^2.0.7",
+    "gulp-strip-debug": "^3.0.0",
+    "gulp-uglify": "^3.0.2"
+  },
+  "dependencies": {
+    "gulp-htmlmin": "^5.0.1"
+  }
+}

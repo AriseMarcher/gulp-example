@@ -1,0 +1,1 @@
+function sayHello(e){return void 0,"hello"+e}document.querySelector(".content").addEventListener("click",function(){void 0});
