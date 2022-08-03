@@ -20,10 +20,15 @@
   },
   "homepage": "https://github.com/AriseMarcher/gulp-example#readme",
   "devDependencies": {
+    "autoprefixer": "^7.2.6",
+    "del": "^6.1.1",
     "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-load-plugins": "^2.0.7",
+    "gulp-postcss": "^9.0.1",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-strip-debug": "^3.0.0",
-    "gulp-uglify": "^3.0.2",
-    "gulp-htmlmin": "^5.0.1"
+    "gulp-uglify": "^3.0.2"
   }
 }

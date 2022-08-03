@@ -1,5 +1,4 @@
 function sayHello (name) {
-  debugger
   // console.log(`the name is ${name}`)
   console.log('the name is ' + name)
   return 'hello' + name

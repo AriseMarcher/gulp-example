@@ -1,22 +1,21 @@
-const gulp = require('gulp')
 const { series, parallel, src, dest } = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins')();
 
-// const htmlmin = gulpLoadPlugins.htmlmin;
+const htmlmin = gulpLoadPlugins.htmlmin;
 const uglify = gulpLoadPlugins.uglify;
-// const cleanCss = gulpLoadPlugins.cleanCss;
+const cleanCss = gulpLoadPlugins.cleanCss;
 // const babel = gulpLoadPlugins.babel;
 // var browserify = require('browserify');
 // const babelify = require('babelify')
 
-// const autoprefixer = require('autoprefixer')
-// const sourcemaps = require('gulp-sourcemaps')
-// const postcss = require('gulp-postcss')
+const autoprefixer = require('autoprefixer')
+const sourcemaps = require('gulp-sourcemaps')
+const postcss = require('gulp-postcss')
 
 const stripDebug = gulpLoadPlugins.stripDebug
 // const source = require('vinyl-source-stream')
 // const buffer     = require('vinyl-buffer')
-// const del = require('del')
+const del = require('del')
 
 const enterFileName = 'code-origin'
 const exportFileName = 'code-mini'
@@ -104,16 +103,11 @@ exports.miniJs = miniJs
 exports.miniCss = miniCss
 exports.clean = clean
 
-gulp.task('bar', done => {
-  // todo something
-  done()
-})
+// function defaultTask(cb) {
+//   cb()
+// }
 
-function defaultTask(cb) {
-  cb()
-}
-
-exports.default = defaultTask
+// exports.default = defaultTask
 
 exports.default = series(
   clean,
