@@ -1,0 +1,14 @@
+#app {
+  width: 100%;
+  height: auto;
+  font-size: 12px;
+  background-color: #fff
+}
+
+.box {
+  justify-content: center;
+  width: 200px;
+  align-items: center;
+  display: flex;
+  height: 200px;
+}
