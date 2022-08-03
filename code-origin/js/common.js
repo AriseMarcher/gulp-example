@@ -1,9 +1,9 @@
-var commomParams = {
+const commomParams = {
   userName: '小明',
   age: 18,
   sex: 'man',
 }
 
-var elseParams = {
+const elseParams = {
   job: 'teacher'
 }

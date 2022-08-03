@@ -4,7 +4,7 @@ const gulpLoadPlugins = require('gulp-load-plugins')();
 const htmlmin = gulpLoadPlugins.htmlmin;
 const uglify = gulpLoadPlugins.uglify;
 const cleanCss = gulpLoadPlugins.cleanCss;
-// const babel = gulpLoadPlugins.babel;
+const babel = gulpLoadPlugins.babel;
 // var browserify = require('browserify');
 // const babelify = require('babelify')
 
@@ -39,11 +39,12 @@ const miniHtml = () => {
 
 const miniJs = () => {
   return src(`${enterFileName}/**/*.js`)
+    .pipe(babel())
     .pipe(uglify({
       compress: true,
       mangle: true
     }))
-    .pipe(stripDebug())
+    // .pipe(stripDebug())
     .pipe(dest(`${exportFileName}`))
 
     // return browserify(`./code-origin/js/index.js`)

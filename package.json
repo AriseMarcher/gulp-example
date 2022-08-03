@@ -20,9 +20,13 @@
   },
   "homepage": "https://github.com/AriseMarcher/gulp-example#readme",
   "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/plugin-transform-runtime": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
     "autoprefixer": "^7.2.6",
     "del": "^6.1.1",
     "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-load-plugins": "^2.0.7",
@@ -30,5 +34,9 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.2"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.18.9",
+    "@babel/runtime-corejs3": "^7.18.9"
   }
 }

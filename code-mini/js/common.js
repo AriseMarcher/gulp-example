@@ -1,1 +1,1 @@
-var commomParams={userName:"小明",age:18,sex:"man"},elseParams={job:"teacher"};
+"use strict";var commomParams={userName:"小明",age:18,sex:"man"},elseParams={job:"teacher"};
