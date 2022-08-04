@@ -5,16 +5,16 @@ const htmlmin = gulpLoadPlugins.htmlmin;
 const uglify = gulpLoadPlugins.uglify;
 const cleanCss = gulpLoadPlugins.cleanCss;
 const babel = gulpLoadPlugins.babel;
-// var browserify = require('browserify');
-// const babelify = require('babelify')
+const browserify = require('browserify');
+const babelify = require('babelify')
 
 const autoprefixer = require('autoprefixer')
 const sourcemaps = require('gulp-sourcemaps')
 const postcss = require('gulp-postcss')
 
 const stripDebug = gulpLoadPlugins.stripDebug
-// const source = require('vinyl-source-stream')
-// const buffer     = require('vinyl-buffer')
+const source = require('vinyl-source-stream')
+const buffer     = require('vinyl-buffer')
 const del = require('del')
 
 const enterFileName = 'code-origin'
@@ -44,39 +44,38 @@ const miniJs = () => {
       compress: true,
       mangle: true
     }))
-    // .pipe(stripDebug())
+    .pipe(stripDebug())
     .pipe(dest(`${exportFileName}`))
-
-    // return browserify(`./code-origin/js/index.js`)
-    //   .transform(babelify, {
-    //     presets: ['@babel/preset-env'],
-    //     plugins: [
-    //       "@babel/plugin-transform-runtime",
-    //       {
-    //         "helpers": true,
-    //         "corejs": false,
-    //         "regenerator": true,
-    //         "useESModules": false,
-    //         "absoluteRuntime": false,
-    //       }
-    //     ]
-    //   })
-    //   .bundle()
-    //   .pipe(source(`index.js`))
-
-      // .pipe(buffer())
-    // browserify(`${enterFileName}/**/*.js`)
-    // .transform(babelify, {
-    //   presets: ['@babel/preset-env'],
-    //   // plugins: ['@babel/transform-runtime']
-    // });
-    // .pipe(uglify({
-    //   compress: true,  // 是否完全压缩
-    //   mangle: true,    // 是否修改变量名
-    // }))
-    // .pipe(stripDebug()) // 去除 console.log 和 debugger
-    // .pipe(dest(`code-mini/js/`))
 }
+
+const bundle = () => {
+  return browserify({
+    entries: 'code-origin/js/index.js'
+  })
+    .transform(babelify, {
+      presets: ["@babel/preset-env"],
+      plugins: [
+        ["@babel/plugin-transform-runtime", {
+        "absoluteRuntime": false,
+        "corejs": 3,
+        "helpers": true,
+        "regenerator": true,
+        "version": "7.18.10"
+      }]
+      ]
+    })
+    .bundle()
+    .pipe(source('index.js'))
+    .pipe(buffer())
+    // .pipe(uglify({
+    //   compress: true,
+    //   mangle: true
+    // }))
+    // .pipe(stripDebug())
+    .pipe(dest('code-mini/js'))
+}
+
+exports.bundle = bundle
 
 const miniCss = () => {
   return src(`${enterFileName}/**/*.css`)
