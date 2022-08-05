@@ -5,6 +5,9 @@ const htmlmin = gulpLoadPlugins.htmlmin;
 const uglify = gulpLoadPlugins.uglify;
 const cleanCss = gulpLoadPlugins.cleanCss;
 const babel = gulpLoadPlugins.babel;
+const concat = gulpLoadPlugins.concat;
+const rename = gulpLoadPlugins.rename;
+
 const browserify = require('browserify');
 const babelify = require('babelify')
 
@@ -41,18 +44,20 @@ const miniJs = () => {
   return src(
     [
       `${enterFileName}/**/*.js`,
-      `!${enterFileName}/js/common/*.js`
+      `!${enterFileName}/js/common/*.js`,
+      `!${enterFileName}/js/*.min.js`
     ])
     .pipe(babel())
     .pipe(uglify({
       compress: true,
       mangle: true
     }))
-    .pipe(stripDebug())
+    // .pipe(stripDebug())
     .pipe(dest(`${exportFileName}`))
 }
 
-const bundle = (cb) => {
+// 对原始js文件进行bundle打包
+const bundleNormal = (cb) => {
   const options = [
     {
       entry: "code-origin/js/index.js",
@@ -67,46 +72,54 @@ const bundle = (cb) => {
   ]
 
   options.forEach(option => {
-    return browserify({
-      entries: option.entry
-    })
-      .transform(babelify, {
-        presets: ["@babel/preset-env"],
-        plugins: [
-          ["@babel/plugin-transform-runtime", {
-          "absoluteRuntime": false,
-          "corejs": 3,
-          "helpers": true,
-          "regenerator": true,
-          "version": "7.18.10"
-        }]
-        ]
-      })
-      .bundle()
-      .pipe(source(option.rename))
-      .pipe(buffer())
-      .pipe(uglify({
-        compress: true,
-        mangle: true
-      }))
-      // .pipe(stripDebug())
-      .pipe(dest(option.output))
+    bundle(option)
   })
   cb && cb()
+}
+
+const bundleConcat = (cb) => {
+  const concatJs = require('./concat.map.json').js
+
+  var rebuildJs = concatJs.map(item => {
+    item.entry = `${item.originOutput}/${item.rename}`
+    return item
+  })
+
+  rebuildJs.forEach(option => {
+    bundle(option)
+  })
+  cb && cb()
+}
+
+// 基础bundle方法
+const bundle = (option) => {
+  return browserify({
+    entries: option.entry
+  })
+    .transform(babelify)
+    .bundle()
+    .pipe(source(option.rename))
+    .pipe(buffer())
+    .pipe(uglify({
+      compress: true,
+      mangle: true
+    }))
+    // .pipe(stripDebug())
+    .pipe(dest(option.output))
 }
 
 exports.bundle = bundle
 
 const miniCss = () => {
   return src(`${enterFileName}/**/*.css`)
-    .pipe(sourcemaps.init())
+    // .pipe(sourcemaps.init())
     .pipe(postcss([
       autoprefixer({
         overrideBrowserslist: ['> 1%', 'last 2 versions', 'Firefox ESR'],
         cascade: true //  是否美化属性值
       })
     ]))
-    .pipe(sourcemaps.write('.'))
+    // .pipe(sourcemaps.write('.'))
     .pipe(cleanCss({
       format: false, // 属性值：false|keep-breaks|beautify 默认false(压缩)
       inline: ['none'], // 当 css文件中有 @import 'xxx.css'语法时, 属性值为none则不将 xxx.css全部解析到当前的css文件
@@ -125,6 +138,39 @@ const copy = (enter, output) => {
   }
 }
 
+const concatJs = (cb) => {
+  const options = require('./concat.map.json').js
+  options.forEach(item => {
+    return src(item.entry)
+      .pipe(rename(item.rename))
+      .pipe(dest(item.originOutput)) // 在原始文件下也保存一份
+      .pipe(dest(item.output))
+  })
+  cb && cb()
+}
+
+const concatCss = (cb) => {
+  const options = require('./concat.map.json').css
+  options.forEach(item => {
+    return src(item.entry)
+      // .pipe(sourcemaps.init())
+      .pipe(postcss([
+        autoprefixer({
+          overrideBrowserslist: ['> 1%', 'last 2 versions', 'Firefox ESR'],
+          cascade: true //  是否美化属性值
+        })
+      ]))
+      // .pipe(sourcemaps.write('.'))
+      .pipe(cleanCss({
+        format: false, // 属性值：false|keep-breaks|beautify 默认false(压缩)
+        inline: ['none'], // 当 css文件中有 @import 'xxx.css'语法时, 属性值为none则不将 xxx.css全部解析到当前的css文件
+      }))
+      .pipe(dest(item.originOutput)) // 在原始文件下也保存一份
+      .pipe(dest(item.output))
+  })
+  cb && cb()
+}
+
 const copyAll = copy(`${enterFileName}/**`, `${exportFileName}`)
 
 exports.miniHtml = miniHtml
@@ -140,5 +186,10 @@ exports.default = series(
     miniJs,
     miniCss,
   ),
-  bundle,
+  bundleNormal,
+  parallel(
+    concatJs,
+    concatCss
+  ),
+  bundleConcat,
 )

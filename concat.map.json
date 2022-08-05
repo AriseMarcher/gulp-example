@@ -1,0 +1,18 @@
+{
+  "js": [
+    {
+      "entry": ["code-origin/js/common.js", "code-origin/js/index.js"],
+      "rename": "common-index.mini.js",
+      "originOutput": "code-origin/js",
+      "output": "code-mini/js"
+    }
+  ],
+  "css": [
+    {
+      "entry": ["code-origin/css/reset.css", "code-origin/css/index.css"],
+      "rename": "reset-index.mini.css",
+      "originOutput": "code-origin/css",
+      "output": "code-mini/css"
+    }
+  ]
+}
