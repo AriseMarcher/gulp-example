@@ -38,7 +38,11 @@ const miniHtml = () => {
 }
 
 const miniJs = () => {
-  return src(`${enterFileName}/**/*.js`)
+  return src(
+    [
+      `${enterFileName}/**/*.js`,
+      `!${enterFileName}/js/common/*.js`
+    ])
     .pipe(babel())
     .pipe(uglify({
       compress: true,
@@ -48,31 +52,47 @@ const miniJs = () => {
     .pipe(dest(`${exportFileName}`))
 }
 
-const bundle = () => {
-  return browserify({
-    entries: 'code-origin/js/index.js'
-  })
-    .transform(babelify, {
-      presets: ["@babel/preset-env"],
-      plugins: [
-        ["@babel/plugin-transform-runtime", {
-        "absoluteRuntime": false,
-        "corejs": 3,
-        "helpers": true,
-        "regenerator": true,
-        "version": "7.18.10"
-      }]
-      ]
+const bundle = (cb) => {
+  const options = [
+    {
+      entry: "code-origin/js/index.js",
+      rename: "index.js",
+      output: "code-mini/js"
+    },
+    {
+      entry: "code-origin/js/common.js",
+      rename: "common.js",
+      output: "code-mini/js"
+    },
+  ]
+
+  options.forEach(option => {
+    return browserify({
+      entries: option.entry
     })
-    .bundle()
-    .pipe(source('index.js'))
-    .pipe(buffer())
-    // .pipe(uglify({
-    //   compress: true,
-    //   mangle: true
-    // }))
-    // .pipe(stripDebug())
-    .pipe(dest('code-mini/js'))
+      .transform(babelify, {
+        presets: ["@babel/preset-env"],
+        plugins: [
+          ["@babel/plugin-transform-runtime", {
+          "absoluteRuntime": false,
+          "corejs": 3,
+          "helpers": true,
+          "regenerator": true,
+          "version": "7.18.10"
+        }]
+        ]
+      })
+      .bundle()
+      .pipe(source(option.rename))
+      .pipe(buffer())
+      .pipe(uglify({
+        compress: true,
+        mangle: true
+      }))
+      // .pipe(stripDebug())
+      .pipe(dest(option.output))
+  })
+  cb && cb()
 }
 
 exports.bundle = bundle
@@ -82,7 +102,7 @@ const miniCss = () => {
     .pipe(sourcemaps.init())
     .pipe(postcss([
       autoprefixer({
-        overrideBrowserslist: ['> 1%', 'last 2 versions', 'Firefox ESR'], // 重要配置 详见下面
+        overrideBrowserslist: ['> 1%', 'last 2 versions', 'Firefox ESR'],
         cascade: true //  是否美化属性值
       })
     ]))
@@ -98,22 +118,27 @@ const clean = () => {
   return del(exportFileName)
 }
 
+const copy = (enter, output) => {
+  return function () {
+    return src(enter)
+      .pipe(dest(output))
+  }
+}
+
+const copyAll = copy(`${enterFileName}/**`, `${exportFileName}`)
+
 exports.miniHtml = miniHtml
 exports.miniJs = miniJs
 exports.miniCss = miniCss
 exports.clean = clean
 
-// function defaultTask(cb) {
-//   cb()
-// }
-
-// exports.default = defaultTask
-
 exports.default = series(
   clean,
+  copyAll,
   parallel(
     miniHtml,
     miniJs,
     miniCss,
-  )
+  ),
+  bundle,
 )

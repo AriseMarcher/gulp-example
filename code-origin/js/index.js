@@ -1,10 +1,17 @@
-const { commomParams } = require('./common')
+const { commomParams: commonParams } = require('./common')
+const commonDefault = require('./common')
 
 const arr = ['apple', 'origin', 'other']
 let fruitName = 'banner'
 
-console.log(arr.includes(fruitName))
+console.log(`the includes result is ${arr.includes(fruitName)}`)
 
-console.log(commonDefault.default.job)
+console.log('the commonDefault value is')
+console.log(commonDefault)
 
-console.log(commomParams.age)
+console.log('the commomParams value is')
+console.log(commonParams)
+
+
+const el = $(".box")
+console.log(el)
