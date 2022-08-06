@@ -7,6 +7,7 @@ const cleanCss = gulpLoadPlugins.cleanCss;
 const babel = gulpLoadPlugins.babel;
 const concat = gulpLoadPlugins.concat;
 const rename = gulpLoadPlugins.rename;
+const watch = gulpLoadPlugins.watch;
 
 const browserify = require('browserify');
 const babelify = require('babelify')
@@ -108,7 +109,6 @@ const bundle = (option) => {
     .pipe(dest(option.output))
 }
 
-exports.bundle = bundle
 
 const miniCss = () => {
   return src(`${enterFileName}/**/*.css`)
@@ -128,12 +128,12 @@ const miniCss = () => {
 }
 
 const clean = () => {
-  return del(exportFileName)
+  return del(exportFileName, { force: true })
 }
 
-const copy = (enter, output) => {
+const copy = (enter, output, base = enterFileName) => {
   return function () {
-    return src(enter)
+    return src(enter, { base: base })
       .pipe(dest(output))
   }
 }
@@ -171,12 +171,46 @@ const concatCss = (cb) => {
   cb && cb()
 }
 
+const startWatch = () => {
+  watch(`${enterFileName}/**`)
+    .on('add', function (path) {
+      copy(path, `${exportFileName}`)().on('finish', function () {
+        console.log('this is add finish')
+      })
+    })
+    .on('change', function (path) {
+      copy(path, `${exportFileName}`)().on('finish', function () {
+        console.log('this is change finish')
+      })
+    })
+    .on('unlink', function (path) {
+      const miniFilePath = path.replace(enterFileName, exportFileName)
+      del(miniFilePath)
+      console.log('this is unlink finish')
+    })
+    .on('addDir', function (path) {
+      console.log(`addDir ${path}`)
+      copy(path, `${exportFileName}`)().on('finish', function () {
+        console.log('this is addDir finish')
+      })
+    })
+    .on('unlinkDir', function (path) {
+      console.log(`unlinkDir ${path}`)
+      const miniFilePath = path.replace(enterFileName, exportFileName)
+      del(miniFilePath)
+      console.log('this is unlinkDir finish')
+    })
+}
+
+
 const copyAll = copy(`${enterFileName}/**`, `${exportFileName}`)
 
 exports.miniHtml = miniHtml
 exports.miniJs = miniJs
 exports.miniCss = miniCss
 exports.clean = clean
+exports.bundle = bundle
+exports.startWatch = startWatch
 
 exports.default = series(
   clean,

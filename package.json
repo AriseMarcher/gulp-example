@@ -9,7 +9,8 @@
     "miniHtml": "gulp miniHtml",
     "miniJs": "gulp miniJs",
     "miniCss": "gulp miniCss",
-    "bundle": "gulp bundle"
+    "bundle": "gulp bundle",
+    "startWatch": "gulp startWatch"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.2",
+    "gulp-watch": "^5.0.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },

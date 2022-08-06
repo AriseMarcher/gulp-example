@@ -2,6 +2,8 @@
 import { commomParams } from './common.js'
 const commonDefault = require('./common.js')
 
+console.log('hello world I modify something')
+
 class Person {
   constructor (name, age) {
     this.name = name
@@ -30,3 +32,5 @@ console.log(commomParams)
 
 const el = $(".box")
 console.log(el)
+
+const box = 'abox'
